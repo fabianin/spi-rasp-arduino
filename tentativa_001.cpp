@@ -2,6 +2,8 @@
 #include <linux/spi/spidev.h>
 #include <fcntl.h>
 #include <cstring>
+#include <cstdio>
+#include <cstdio>
 #include <iostream>
 
 
@@ -24,7 +26,7 @@ int main() {
 	}
 	return 0;
 }
-usigned char spiTxRx(unsigned char txDat) {
+char spiTxRx(unsigned char txDat) {
 	struct spi_ioc_transfer spi;
 	memset ( & spi, 0, sizeof (spi));
 	spi.tx_buf = (unsigned char) & txDat;
