@@ -9,9 +9,42 @@
 
 using namespace std;
 
-int spiTxRx(unsigned char txDat);
+char spiTxRxx(unsigned char txDat) {
+	struct spi_ioc_transfer spi;
+	memset ( &spi, 0, sizeof (spi));
+	spi.tx_buf = (unsigned char) &txDat;
+	spi.rx_buf = (unsigned char) &rxDat;
+	spi.len = 1;
+
+	ioctl (fd, SPI_IOC_MESSAGE(1), &spi);
+
+	return rxDat;
+}
+
 int fd;
-float enviaComando(char identificador);
+float enviaComando(char identificador) {
+	union {
+		float floatRx;
+		unsigned char byteRx[4];
+	} resultado;
+	unsigned char byteResultado;
+	bool ack;
+	do {
+		ack = false;
+		spiTxRxx('s');
+		byteResultado = spiTxRxx(identificador);
+		if(byteResultado == 'a') {
+			ack = true;
+		}
+	} while(ack == false);
+	resultado.byteRx[0] = spiTxRxx(0);
+	resultado.byteRx[1] = spiTxRxx(0);
+	resultado.byteRx[2] = spiTxRxx(0);
+	resultado.byteRx[3] = spiTxRxx(0);
+	return resultado.floatRx;
+
+}
+
 
 int main() {
 	int t;
@@ -25,37 +58,4 @@ int main() {
 		scanf("%f", &t);
 	}
 	return 0;
-}
-char spiTxRx(unsigned char txDat) {
-	struct spi_ioc_transfer spi;
-	memset ( &spi, 0, sizeof (spi));
-	spi.tx_buf = (unsigned char) &txDat;
-	spi.rx_buf = (unsigned char) &rxDat;
-	spi.len = 1;
-
-	ioctl (fd, SPI_IOC_MESSAGE(1), &spi);
-
-	return rxDat;
-}
-float enviaComando(char identificador) {
-	union {
-		float floatRx;
-		unsigned char byteRx[4];
-	} resultado;
-	unsigned char byteResultado;
-	bool ack;
-	do {
-		ack = false;
-		spiTxRx('s');
-		byteResultado = spiTxRx(identificador);
-		if(byteResultado == 'a') {
-			ack = true;
-		}
-	} while(ack == false);
-	resultado.byteRx[0] = spiTxRx(0);
-	resultado.byteRx[1] = spiTxRx(0);
-	resultado.byteRx[2] = spiTxRx(0);
-	resultado.byteRx[3] = spiTxRx(0);
-	return resultado.floatRx;
-
 }
