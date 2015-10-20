@@ -22,18 +22,18 @@ int main() {
 	while (1) {
 		retorno = enviaComando('s');
 		cout << retorno << endl;
-		scanf("%f", & t);
+		scanf("%f", &t);
 	}
 	return 0;
 }
 char spiTxRx(unsigned char txDat) {
 	struct spi_ioc_transfer spi;
-	memset ( & spi, 0, sizeof (spi));
-	spi.tx_buf = (unsigned char) & txDat;
-	spi.rx_buf = (unsigned char) & rxDat;
+	memset ( &spi, 0, sizeof (spi));
+	spi.tx_buf = (unsigned char) &txDat;
+	spi.rx_buf = (unsigned char) &rxDat;
 	spi.len = 1;
 
-	ioctl (fd, SPI_IOC_MESSAGE(1), & spi);
+	ioctl (fd, SPI_IOC_MESSAGE(1), &spi);
 
 	return rxDat;
 }
